@@ -113,10 +113,10 @@ magic_syl = lambda a1,b1: [a + [b] for a,b in itertools.product(a1,b1)]
 syl = lambda word: [len(list(y for y in x if y[-1].isdigit())) for x in p_dict[word.lower()]]
 
 if __name__ == '__main__':
-    my_little_markov = Markov(get_sentence("bible.txt"), 2)
-    # my_little_markov = Markov(get_sentence("jimstone.txt"), 3)
-    # my_little_markov = Markov(get_sentence("timecube.txt"), 3)
-    # my_little_markov = Markov(get_sentence("scientology.txt"), 3)
+    # my_little_markov = Markov(get_sentence("bible.txt"), 2)
+    my_little_markov = Markov(get_sentence("jimstone.txt"), 2)
+    # my_little_markov = Markov(get_sentence("timecube.txt"), 2)
+    # my_little_markov = Markov(get_sentence("scientology.txt"), 2)
     def gen():
         while 1:
             try:
@@ -137,20 +137,24 @@ if __name__ == '__main__':
         for length in line[2]:
             for rime in line[1]:
                 cur = line_lens.setdefault(length, {}).setdefault(tuple(rime), [])
-                if any(line[0][-1] == prev[0][-1] for prev in cur):
+                if any(line[0][-1].strip('?!.;') == prev[0][-1].strip('?!;.') for prev in cur):
                     continue
+                line[0][-1] = line[0][-1][:-1] + ';'
                 cur.append(line)
                 if length == 9 and len(cur) >= 3:
                     longer = cur
                 if length == 6 and len(cur) >= 2:
                     shorter = cur
                 if shorter and longer:
-                    print longer[0][0]
-                    print longer[1][0]
-                    print shorter[0][0]
-                    print shorter[1][0]
-                    print longer[2][0]
+                    print ' '.join(longer[0][0])
+                    print ' '.join(longer[1][0])
+                    print ' '.join(shorter[0][0])
+                    print ' '.join(shorter[1][0])
+                    print ' '.join(longer[2][0])
 
                     exit()
-
-
+                    raw_input()
+                    longer = False
+                    shorter = False
+                    line_lens = {}
+                    
