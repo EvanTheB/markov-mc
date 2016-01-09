@@ -25,7 +25,7 @@ def is_vow(c, language='en'):
         # ignore the schwa vowel '@' as it can be rhymed with several
         # different vowels. However, in BattleBot we do not ignore it
         # in order to get a higher precision.
-        return c in u'3L5aAeEiI0VuUoO'
+        return c in u'3L5aAeEiI0VuUoO@'
 
     else:
         raise Exception("Unknown language: %s" % language)
@@ -61,7 +61,6 @@ def get_phonetic_transcription(text, language='en-us', output_fname=None):
         fname2 = output_fname
 
     if output_fname is None or not os.path.exists(fname2):
-        print "Transcribing: %s" % fname2
         fname = u'temp_lyrics.txt'
         f = codecs.open(fname, 'w', 'utf8')
         f.write(text)
