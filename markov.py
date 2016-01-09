@@ -102,8 +102,15 @@ rhymes = lambda a,b: len([x for x,y in itertools.takewhile(lambda x: x[0] == x[1
 
 import phonetics
 import sys
+
+from nltk.corpus import cmudict
+p_dict = cmudict.dict()
+
 vow = lambda line: [l for l in line if phonetics.is_vow(l)]
-syl = lambda line: len([l for l in line if phonetics.is_vow(l)])
+get_phon = lambda x: p_dict[x]
+magic = lambda a1,b1: set(a + b for a,b in itertools.product(a1,b1))
+magic_syl = lambda a1,b1: [a + [b] for a,b in itertools.product(a1,b1)]
+syl = lambda word: [len(list(y for y in x if y[-1].isdigit())) for x in p_dict[word.lower()]]
 
 if __name__ == '__main__':
     my_little_markov = Markov(get_sentence("bible.txt"), 2)
@@ -112,38 +119,38 @@ if __name__ == '__main__':
     # my_little_markov = Markov(get_sentence("scientology.txt"), 3)
     def gen():
         while 1:
-            x = my_little_markov.generate_original()
-            p = phonetics.get_phonetic_transcription(' '.join(x))
-            yield (x, #raw
-                p, #phon
-                vow(p), #vows
-                syl(p)) #syllas 
+            try:
+                x = my_little_markov.generate_original()
+                p = [k[-3:] for k in get_phon(x[-1].strip('?!.'))]
+#                reduce(magic_syl, [get_phon(w.strip('?!.')) for w in x], [[]])
+                s = reduce(magic, [syl(w.strip('?!.')) for w in x])
+                yield ( x, #raw
+                        p, #phon
+                        s
+                    )
+            except KeyError as e:
+                pass
     line_lens = {}
     longer = False
     shorter = False
     for line in gen():
-        cur = line_lens.setdefault(line[3], {}).setdefault(line[2][-1], [])
-        cur.append(line)
-        if line[3] == 8 and len(cur) >= 3:
-            longer = cur
-        if line[3] == 6 and len(cur) >= 2:
-            shorter = cur
-        if shorter and longer:
-            break
+        for length in line[2]:
+            for rime in line[1]:
+                cur = line_lens.setdefault(length, {}).setdefault(tuple(rime), [])
+                if any(line[0][-1] == prev[0][-1] for prev in cur):
+                    continue
+                cur.append(line)
+                if length == 9 and len(cur) >= 3:
+                    longer = cur
+                if length == 6 and len(cur) >= 2:
+                    shorter = cur
+                if shorter and longer:
+                    print longer[0][0]
+                    print longer[1][0]
+                    print shorter[0][0]
+                    print shorter[1][0]
+                    print longer[2][0]
 
-    print longer[0][0]
-    print longer[1][0]
-    print shorter[0][0]
-    print shorter[1][0]
-    print longer[2][0]
-
-    print longer[0]
-    print longer[1]
-    print shorter[0]
-    print shorter[1]
-    print longer[2]
-
-
-
+                    exit()
 
 
