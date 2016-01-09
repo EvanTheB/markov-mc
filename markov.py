@@ -110,25 +110,38 @@ if __name__ == '__main__':
     # my_little_markov = Markov(get_sentence("jimstone.txt"), 3)
     # my_little_markov = Markov(get_sentence("timecube.txt"), 3)
     # my_little_markov = Markov(get_sentence("scientology.txt"), 3)
-    corp = [my_little_markov.generate_original() for i in xrange(500)]
-    corp = [(x,
-        phonetics.get_phonetic_transcription(' '.join(x)))
-        for x in corp]
-    corp = [(x[0], #raw
-        x[1], #phon
-        vow(x[1]), #vows
-        syl(x[1]) #syllas
-        ) for x in corp]
-    r = []
-    for i in range(len(corp)):
-        for j in range(i):
-            rhy = rhymes(corp[i][2],corp[j][2])
-            # syms
-            sym = rhymes(corp[i][1],corp[j][1])
-            if rhy:
-                r.append((rhy, sym, corp[i], corp[j]))
-    best = sorted(r, key= lambda x: x[0] - x[1], reverse=True)[0:5]
-    print '\n'.join(['\n'.join([str(x) for x in b]) for b in best])
+    def gen():
+        while 1:
+            x = my_little_markov.generate_original()
+            p = phonetics.get_phonetic_transcription(' '.join(x))
+            yield (x, #raw
+                p, #phon
+                vow(p), #vows
+                syl(p)) #syllas 
+    line_lens = {}
+    longer = False
+    shorter = False
+    for line in gen():
+        cur = line_lens.setdefault(line[3], {}).setdefault(line[2][-1], [])
+        cur.append(line)
+        if line[3] == 8 and len(cur) >= 3:
+            longer = cur
+        if line[3] == 6 and len(cur) >= 2:
+            shorter = cur
+        if shorter and longer:
+            break
+
+    print longer[0][0]
+    print longer[1][0]
+    print shorter[0][0]
+    print shorter[1][0]
+    print longer[2][0]
+
+    print longer[0]
+    print longer[1]
+    print shorter[0]
+    print shorter[1]
+    print longer[2]
 
 
 
