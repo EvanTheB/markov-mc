@@ -95,12 +95,42 @@ def get_sentence(filename):
             yield buf
             buf = []
 
+import itertools
+
+syms = lambda a,b: len([x for x,y in zip(reversed(a),reversed(b)) if x == y])
+rhymes = lambda a,b: len([x for x,y in itertools.takewhile(lambda x: x[0] == x[1], itertools.izip(reversed(a),reversed(b)))])
+
+import phonetics
+import sys
+vow = lambda line: [l for l in line if phonetics.is_vow(l)]
+syl = lambda line: len([l for l in line if phonetics.is_vow(l)])
+
 if __name__ == '__main__':
-    # my_little_markov = Markov(get_sentence("bible.txt"), 3)
+    my_little_markov = Markov(get_sentence("bible.txt"), 2)
     # my_little_markov = Markov(get_sentence("jimstone.txt"), 3)
-    my_little_markov = Markov(get_sentence("timecube.txt"), 3)
-    for i in range(500):
-        words = my_little_markov.generate_original()
-        print " ".join(words)
-        print my_little_markov.get_prob(words)
-        print my_little_markov.is_in_corpus(words)
+    # my_little_markov = Markov(get_sentence("timecube.txt"), 3)
+    # my_little_markov = Markov(get_sentence("scientology.txt"), 3)
+    corp = [my_little_markov.generate_original() for i in xrange(500)]
+    corp = [(x,
+        phonetics.get_phonetic_transcription(' '.join(x)))
+        for x in corp]
+    corp = [(x[0], #raw
+        x[1], #phon
+        vow(x[1]), #vows
+        syl(x[1]) #syllas
+        ) for x in corp]
+    r = []
+    for i in range(len(corp)):
+        for j in range(i):
+            rhy = rhymes(corp[i][2],corp[j][2])
+            # syms
+            sym = rhymes(corp[i][1],corp[j][1])
+            if rhy:
+                r.append((rhy, sym, corp[i], corp[j]))
+    best = sorted(r, key= lambda x: x[0] - x[1], reverse=True)[0:5]
+    print '\n'.join(['\n'.join([str(x) for x in b]) for b in best])
+
+
+
+
+
