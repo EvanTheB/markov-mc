@@ -6,7 +6,6 @@ import string
 
 END = "END"
 
-
 class Markov(object):
 
     """docstring for Markov"""
@@ -114,14 +113,15 @@ syl = lambda word: [len(list(y for y in x if y[-1].isdigit())) for x in p_dict[w
 
 if __name__ == '__main__':
     # my_little_markov = Markov(get_sentence("bible.txt"), 2)
-    my_little_markov = Markov(get_sentence("jimstone.txt"), 2)
+    my_little_markov = Markov(get_sentence("scify.txt"), 2)
+    # my_little_markov = Markov(get_sentence("jimstone.txt"), 2)
     # my_little_markov = Markov(get_sentence("timecube.txt"), 2)
     # my_little_markov = Markov(get_sentence("scientology.txt"), 2)
     def gen():
         while 1:
             try:
                 x = my_little_markov.generate_original()
-                p = [k[-3:] for k in get_phon(x[-1].strip('?!.'))]
+                p = [k[-5:] for k in get_phon(x[-1].strip('?!.'))]
 #                reduce(magic_syl, [get_phon(w.strip('?!.')) for w in x], [[]])
                 s = reduce(magic, [syl(w.strip('?!.')) for w in x])
                 yield ( x, #raw
@@ -157,4 +157,3 @@ if __name__ == '__main__':
                     longer = False
                     shorter = False
                     line_lens = {}
-                    
