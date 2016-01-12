@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"
+"""
 This code taken from http://mining4meaning.com/2015/02/13/raplyzer/
 Raplyzer
 https://github.com/ekQ/raplysaattori
@@ -26,8 +26,8 @@ furnished to do so, subject to the following conditions:
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
-"
-"
+"""
+
 
 import os
 import codecs

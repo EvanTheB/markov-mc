@@ -113,7 +113,7 @@ syl = lambda word: [len(list(y for y in x if y[-1].isdigit())) for x in p_dict[w
 
 if __name__ == '__main__':
     # my_little_markov = Markov(get_sentence("bible.txt"), 2)
-    my_little_markov = Markov(get_sentence("scify.txt"), 2)
+    my_little_markov = Markov(get_sentence("filtered.log"), 2)
     # my_little_markov = Markov(get_sentence("jimstone.txt"), 2)
     # my_little_markov = Markov(get_sentence("timecube.txt"), 2)
     # my_little_markov = Markov(get_sentence("scientology.txt"), 2)
